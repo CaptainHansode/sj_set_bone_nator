@@ -20,7 +20,7 @@
 bl_info = {
     "name": "SJ Set Bone Nator",
     "author": "CaptainHansode",
-    "version": (1, 0, 0),
+    "version": (1, 1, 0),
     "blender": (2, 80, 0),
     "location":  "View3D > Sidebar > Item Tab",
     "description": "Set the properties of the selected bone.",
@@ -58,9 +58,13 @@ def set_bone_group(self, context):
 
 def set_bone_parent(self, context):
     r"""set bone parent"""
+    if self.bone_p == "":
+        _bone_p = None
+    else:
+        _bone_p = context.active_object.data.edit_bones[self.bone_p]
     for bn in context.active_object.data.edit_bones:
         if bn.select is True:
-            bn.parent = self.bone_p
+            bn.parent = _bone_p
 
 
 def set_bone_head(self, context):
@@ -133,12 +137,8 @@ def set_bone_inherit_scale(self, context):
 
 def set_cs(self, context):
     """set bone custom shape"""
-    if self.cs_obj == "":
-        obj = None
-    else:
-        obj = bpy.data.objects[self.cs_obj]
     for pbn in context.selected_pose_bones:
-        pbn.custom_shape = obj
+        pbn.custom_shape = self.cs_obj
 
 
 def set_cs_scale(self, context):
@@ -381,7 +381,9 @@ class SJSetBoneNatorProperties(bpy.types.PropertyGroup):
     b_grp: bpy.props.StringProperty(name="Bone Group", update=set_bone_group)
 
     # is_hide: bpy.props.BoolProperty(name="Hide", default=False, update=set_hide)
-    cs_obj: bpy.props.StringProperty(name="Custom Shape", update=set_cs)
+    # cs_obj: bpy.props.StringProperty(name="Custom Shape", update=set_cs)
+    cs_obj: bpy.props.PointerProperty(name="Custom Shape", type=bpy.types.Object, update=set_cs)
+
     cs_scale: bpy.props.FloatProperty(
         name="Scale", 
         default=1.0, 
@@ -424,8 +426,8 @@ class SJSetBoneNatorProperties(bpy.types.PropertyGroup):
     )
 
     # edit mode
-    p_grp: bpy.props.StringProperty(name="Parent", update=set_bone_parent)
-    bone_p: bpy.props.PointerProperty(name="Parent", type=bpy.types.Object, update=set_parent)
+    bone_p: bpy.props.StringProperty(name="Parent", update=set_bone_parent)
+    # bone_p: bpy.props.PointerProperty(name="Parent", type=bpy.types.PoseBone, update=set_bone_parent)
 
     head_x: bpy.props.FloatProperty(
         name="X", default=0.0, min=-10000.0, max=10000.0, step=0.1)
@@ -513,7 +515,7 @@ class SJSetBoneNatorEditBnPanel(bpy.types.Panel):
 
         layout.label(text="Relationship", icon='RADIOBUT_ON')
         col = layout.column(align=True)
-        col.prop_search(sjsb, "p_grp", context.active_object.data, "edit_bones")
+        col.prop_search(sjsb, "bone_p", context.active_object.data, "edit_bones")
         col.prop(sjsb, "use_connect", text="Connected")
         col.prop(sjsb, "use_local_location", text="Local Location")
         col.prop(sjsb, "use_inherit_rotation", text="Inherit Rotation")
