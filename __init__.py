@@ -472,6 +472,7 @@ class SJSetBoneNatorProperties(bpy.types.PropertyGroup):
 class SJSetBoneNatorEditBnPanel(bpy.types.Panel):
     r"""UI"""
     bl_label = "SJ Set Bone Nator"
+    bl_idname = "SJSETBONENATOR_PT_PANEL"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'  # UIのタイプ
     bl_context = "armature_edit"  # ポーズモード以外は使えない
@@ -526,6 +527,7 @@ class SJSetBoneNatorEditBnPanel(bpy.types.Panel):
 class SJSetBoneNatorPoseModePanel(bpy.types.Panel):
     r"""UI"""
     bl_label = "SJ Set Bone Nator"
+    bl_idname = "SJSETBONENATORPOSEMODE_PT_PANEL"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'  # UIのタイプ
     bl_context = "posemode"  # ポーズモード以外は使えない
